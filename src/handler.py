@@ -22,7 +22,6 @@ def handler(event):
     for arg in REQ_ARGS:
         if arg not in event['input']:
             return {
-                'statusCode': 400,
                 'body': f'{arg} not found in event'
             }
 
