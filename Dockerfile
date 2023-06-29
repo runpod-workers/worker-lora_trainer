@@ -21,6 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     rm /requirements.txt
 
 # Add src files (Worker Template)
-ADD src .
+ADD src /sd-scripts
 
+WORKDIR /sd-scripts
 CMD python3 -u /handler.py

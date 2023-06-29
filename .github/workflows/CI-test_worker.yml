@@ -64,6 +64,7 @@ jobs:
 
       - name: Execute Tests
         run: |
+          cp -r src/* /sd-scripts && cd /sd-scripts && \
           python src/handler.py --test_input='{"input": {
             "zip_url": "https://github.com/runpod-workers/sample-inputs/raw/main/images/froggy.zip",
             "instance_name": "daiton",
