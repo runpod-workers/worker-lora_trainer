@@ -50,18 +50,27 @@ def handler(job):
                     flat_directory
                 )
 
-    subprocess.run(f"""accelerate launch --num_cpu_threads_per_process=2 "train_network.py"                                                         \
-                         --enable_bucket --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors"                                     \
-                         --train_data_dir="./training/img" --resolution=512,512 --output_dir="./training/model"                                     \
-                         --logging_dir="./training/logs" --network_alpha=1 --save_model_as=safetensors --network_module=networks.lora               \
-                         --text_encoder_lr=5e-05 --unet_lr={job_input['unet_lr']} --network_dim={job_input['network_dim']}                          \
-                         --output_name={job['id']} --lr_scheduler_num_cycles={job_input['lr_scheduler_num_cycles']}                                 \
-                         --learning_rate={job_input['learning_rate']} --lr_scheduler={job_input['lr_scheduler']}                                    \
-                         --lr_warmup_steps={job_input['lr_warmup_steps']} --train_batch_size={job_input['train_batch_size']}                        \
-                         --max_train_steps={job_input['max_train_steps']} --save_every_n_epochs=0 --mixed_precision={job_input['mixed_precision']}  \
-                         --save_precision={job_input['save_precision']} --cache_latents --optimizer_type={job_input['optimizer_type']}              \
-                         --max_data_loader_n_workers={job_input['max_data_loader_num_workers']}                                                     \
-                         --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
+    subprocess.run(f"""accelerate launch --num_cpu_threads_per_process 1 train_network.py \
+                         --enable_bucket \
+                         --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors" \
+                         --train_data_dir="./training/img" \
+                         --resolution=512,512 \
+                         --output_dir="./training/model" \
+                         --output_name={job['id']} \
+                         --save_model_as=safetensors \
+                         --network_module=networks.lora \
+                         --cache_latents --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
+
+
+# --logging_dir = "./training/logs" - -network_alpha = 1                \
+#     - -text_encoder_lr = 5e-05 - -unet_lr = {job_input['unet_lr']} - -network_dim = {job_input['network_dim']}                          \
+#     - -lr_scheduler_num_cycles = {job_input['lr_scheduler_num_cycles']}                                 \
+#     - -learning_rate = {job_input['learning_rate']} - -lr_scheduler = {job_input['lr_scheduler']}                                    \
+#     - -lr_warmup_steps = {job_input['lr_warmup_steps']} - -train_batch_size = {job_input['train_batch_size']}                        \
+#     - -max_train_steps = {job_input['max_train_steps']} - -save_every_n_epochs = 0 - -mixed_precision = {job_input['mixed_precision']}  \
+#     - -save_precision = {job_input['save_precision']} \
+#     - -optimizer_type = {job_input['optimizer_type']} \
+#     - -max_data_loader_n_workers = {job_input['max_data_loader_num_workers']} \
 
     uploaded_lora_url = upload_file_to_bucket(
         file_name=f"{job['id']}.safetensors",

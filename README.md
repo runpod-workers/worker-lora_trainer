@@ -58,3 +58,18 @@ Derived from e1pupper's RunPod worker implementation https://github.com/e1pupper
     }
 }
 ```
+
+```BASH
+accelerate launch --num_cpu_threads_per_process 1 train_network.py \
+--enable_bucket \
+--pretrained_model_name_or_path="cache/v1-5-pruned.safetensors" \
+--train_data_dir="/root/sd-scripts/input_imgs" \
+--resolution=512,512 \
+--output_dir="./training/model" \
+--output_name="froggy_lora" \
+--save_model_as=safetensors \
+--network_module=networks.lora \
+--cache_latents \
+--bucket_reso_steps=64 \
+--bucket_no_upscale
+```
