@@ -21,7 +21,7 @@ def handler(job):
         return {'errors': job_input['errors']}
 
     # Download the zip file
-    input_images = rp_download.file(job_input['zip_url'])
+    downloaded_input = rp_download.file(job_input['zip_url'])
 
     if not os.path.exists('./training'):
         os.mkdir('./training')
@@ -31,9 +31,23 @@ def handler(job):
         os.mkdir('./training/model')
         os.mkdir('./training/logs')
 
-    # Move the images to the training folder
-    shutil.move(
-        input_images, f"./training/img/{job_input['steps']}_{job_input['instance_name']} {job_input['class_name']}")
+    # Make clean data directory
+    allowed_extensions = [".jpg", ".jpeg", ".png"]
+    flat_directory = f"./training/img/{job_input['steps']}_{job_input['instance_name']} {job_input['class_name']}"
+    os.makedirs(flat_directory, exist_ok=True)
+
+    for root, dirs, files in os.walk(downloaded_input['extracted_path']):
+        # Skip __MACOSX folder
+        if '__MACOSX' in root:
+            continue
+
+        for file in files:
+            file_path = os.path.join(root, file)
+            if os.path.splitext(file_path)[1].lower() in allowed_extensions:
+                shutil.copy(
+                    os.path.join(downloaded_input['extracted_path'], file_path),
+                    flat_directory
+                )
 
     subprocess.run(f"""accelerate launch --num_cpu_threads_per_process=2 "train_network.py"
                          --enable_bucket --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors"
