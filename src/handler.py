@@ -18,7 +18,7 @@ def handler(job):
     job_input = job['input']
 
     if 'errors' in (job_input := validate(job_input, INPUT_SCHEMA)):
-        return {'errors': job_input['errors']}
+        return {'error': job_input['errors']}
 
     # Download the zip file
     downloaded_input = rp_download.file(job_input['zip_url'])

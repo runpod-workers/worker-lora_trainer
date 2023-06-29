@@ -65,7 +65,9 @@ jobs:
       - name: Execute Tests
         run: |
           python src/handler.py --test_input='{"input": {
-            "zip_url": "https://github.com/runpod-workers/sample-inputs/raw/main/images/froggy.zip"
+            "zip_url": "https://github.com/runpod-workers/sample-inputs/raw/main/images/froggy.zip",
+            "instance_name": "daiton",
+            "class_name": "frog"
           }}'
 
   terminate_runner:
