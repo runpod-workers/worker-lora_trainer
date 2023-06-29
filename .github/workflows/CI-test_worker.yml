@@ -29,7 +29,7 @@ jobs:
         id: deploy
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://api.runpod.ai/v2/${{ vars.RUNPOD_ENDPOINT }}/run"
+          url: "https://api.runpod.ai/v2/${{ vars.RUNNER_24GB }}/run"
           method: "POST"
           customHeaders: '{"Content-Type": "application/json"}'
           bearerToken: ${{ secrets.RUNPOD_API_KEY }}
@@ -76,7 +76,7 @@ jobs:
         id: get_status
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://api.runpod.ai/v2/${{ vars.RUNPOD_ENDPOINT }}/status/${{ needs.initialize_runner.outputs.id }}"
+          url: "https://api.runpod.ai/v2/${{ vars.RUNNER_24GB }}/status/${{ needs.initialize_runner.outputs.id }}"
           method: "GET"
           customHeaders: '{"Content-Type": "application/json"}'
           bearerToken: ${{ secrets.RUNPOD_API_KEY }}
