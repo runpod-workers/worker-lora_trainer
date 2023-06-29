@@ -31,4 +31,4 @@ triton==2.0.0
 voluptuous==0.13.1
 wandb==0.15.0
 requests==2.31.0
-xformers==0.0.19
+xformers==0.0.20
