@@ -11,7 +11,7 @@ WORKDIR /
 
 # Install system packages, clone repo, and cache models
 COPY builder/setup.sh /setup.sh
-RUN bash /system_packages.sh
+RUN bash /setup.sh
 
 # Install Python dependencies (Worker Template)
 COPY builder/requirements.txt /requirements.txt

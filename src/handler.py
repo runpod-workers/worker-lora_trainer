@@ -1,23 +1,16 @@
-import runpod
-import boto3
-import zipfile
+'''
+Handler for the generation of a fine tuned lora model.
+'''
+
 import os
-import subprocess
 import shutil
-import requests
+import subprocess
 
-from runpod.serverless.utils.validator import validate
+import runpod
+from runpod.serverless.utils.rp_validator import validate
+from runpod.serverless.utils import rp_download, upload_file_to_bucket
+
 from rp_schema import INPUT_SCHEMA
-
-REQ_ARGS = [
-    'S3_URL',
-    'S3_KEY_ID',
-    'S3_SECRET_KEY',
-    'S3_BUCKET',
-    'INSTANCE_PROMPT',
-    'CLASS_PROMPT',
-    'ZIP_NAME',
-]
 
 
 def handler(job):
@@ -27,6 +20,9 @@ def handler(job):
     if 'errors' in (job_input := validate(job_input, INPUT_SCHEMA)):
         return {'errors': job_input['errors']}
 
+    # Download the zip file
+    input_images = rp_download.file(job_input['zip_url'])
+
     if not os.path.exists('./training'):
         os.mkdir('./training')
         os.mkdir('./training/img')
@@ -35,7 +31,11 @@ def handler(job):
         os.mkdir('./training/model')
         os.mkdir('./training/logs')
 
-    out = subprocess.run(f"""accelerate launch --num_cpu_threads_per_process=2 "train_network.py"
+    # Move the images to the training folder
+    shutil.move(
+        input_images, f"./training/img/{job_input['steps']}_{job_input['instance_name']} {job_input['class_name']}")
+
+    subprocess.run(f"""accelerate launch --num_cpu_threads_per_process=2 "train_network.py"
                          --enable_bucket --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors"
                          --train_data_dir="./training/img" --resolution=512,512 --output_dir="./training/model"
                          --logging_dir="./training/logs" --network_alpha=1 --save_model_as=safetensors --network_module=networks.lora
@@ -48,23 +48,14 @@ def handler(job):
                          --max_data_loader_n_workers={job_input['max_data_loader_num_workers']}
                          --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
 
-    if out.returncode == 0:
-        # upload the model to the s3 bucket
-        bucket.upload_file(f'./training/model/{SAVE_AS}.safetensors', f'{SAVE_AS}.safetensors')
+    uploaded_lora_url = upload_file_to_bucket(
+        file_name=f"{job['id']}.safetensors",
+        file_location=f"./training/model/{job['id']}.safetensors",
+        bucket_creds=job['s3Config'],
+        bucket_name=job['s3Config']['bucketName'],
+    )
 
-        shutil.rmtree('./training')
-
-        if 'ENDPOINT' in job_input:
-            req = requests.post(job_input['ENDPOINT'], json={
-                                "model": f'{SAVE_AS}.safetensors', "prompt": INSTANCE_PROMPT, "class": CLASS_PROMPT})
-
-        return {
-            'statusCode': 200,
-        }
-
-    return {
-        'statusCode': 500,
-    }
+    return {"lora": uploaded_lora_url}
 
 
 runpod.serverless.start({"handler": handler})
