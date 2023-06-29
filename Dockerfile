@@ -24,4 +24,5 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 ADD src /sd-scripts
 
 WORKDIR /sd-scripts
+
 CMD python3 -u /handler.py
