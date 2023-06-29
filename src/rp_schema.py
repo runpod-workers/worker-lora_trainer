@@ -18,7 +18,7 @@ INPUT_SCHEMA = {
     },
     'network_dim': {
         'type': int,
-        'rqeuired': False,
+        'required': False,
         'default': 256
     },
     'lr_scheduler_num_cycles': {
