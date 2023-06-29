@@ -9,14 +9,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Set the working directory
 WORKDIR /
 
-# Update and upgrade the system packages (Worker Template)
-COPY builder/system_packages.sh /system_packages.sh
+# Install system packages, clone repo, and cache models
+COPY builder/setup.sh /setup.sh
 RUN bash /system_packages.sh
-
-# Clone kohya-ss/sd-scripts
-RUN git clone https://github.com/kohya-ss/sd-scripts.git && \
-    cd sd-scripts && \
-    git checkout 0cfcb5a49cf813547d728101cc05edf1a9b7d06c
 
 # Install Python dependencies (Worker Template)
 COPY builder/requirements.txt /requirements.txt

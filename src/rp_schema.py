@@ -1,69 +1,79 @@
-INPUT = {
-    'sample_prompts': {
-        ''
-    },
-    # Flag
-    'no_metadata': {
-        'type': bool,
-        'required': False,
-        'default': None
-    },
-    'save_model_as': {
+INPUT_SCHEMA = {
+    'zip_url': {
         'type': str,
-        'required': False,
-        'default': 'safetensors',
-        'constrains': lambda saved_model: saved_model in ["ckpt", "pt", "safetensors"]
+        'required': True
+    },
+    'instance_name': {
+        'type': str,
+        'required': True
+    },
+    'class_name': {
+        'type': str,
+        'required': True
     },
     'unet_lr': {
         'type': float,
         'required': False,
-        'default': None
-    },
-    'text_encoder_lr': {
-        'type': float,
-        'required': False,
-        'default': None
-    },
-    'network_weights': {
-        'type': str,
-        'required': False,
-        'default': None
-    },
-    'network_module': {
-        'type': str,
-        'required': False,
-        'default': None
+        'default': 0.0001
     },
     'network_dim': {
         'type': int,
-        'required': False,
-        'default': None
+        'rqeuired': False,
+        'default': 256
     },
-    'network_alpha': {
-        'type': float,
+    'lr_scheduler_num_cycles': {
+        'type': int,
         'required': False,
         'default': 1
     },
-    'network_args': {
+    'learning_rate': {
+        'type': float,
+        'required': False,
+        'default': 0.0001
+    },
+    'lr_scheduler': {
         'type': str,
         'required': False,
-        'default': None
+        'default': 'cosine'
     },
-    # Flag
-    'network_train_unet_only': {
-        'type': bool,
+    'lr_warmup_steps': {
+        'type': int,
         'required': False,
-        'default': None
+        'default': 280
     },
-    # Flag
-    'network_train_text_encoder_only': {
-        'type': bool,
+    'train_batch_size': {
+        'type': int,
         'required': False,
-        'default': None
+        'default': 1
     },
-    'training_comment': {
+    'max_train_steps': {
+        'type': int,
+        'required': False,
+        'default': 1250
+    },
+    'mixed_precision': {
         'type': str,
         'required': False,
-        'default': None
+        'default': 'fp16'
+    },
+    'save_precision': {
+        'type': str,
+        'required': False,
+        'default': 'fp16'
+    },
+    'optimizer_type': {
+        'type': str,
+        'required': False,
+        'default': 'AdamW8bit'
+    },
+    'max_data_loader_num_workers': {
+        'type': int,
+        'required': False,
+        'default': 0
+    },
+    'steps': {
+        'type': int,
+        'required': False,
+        'default': 125
     }
 }

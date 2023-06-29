@@ -13,3 +13,11 @@ apt-get install -y --no-install-recommends \
 apt-get autoremove -y && \
 apt-get clean -y && \
 rm -rf /var/lib/apt/lists/*
+
+# Clone kohya-ss/sd-scripts
+git clone https://github.com/kohya-ss/sd-scripts.git && \
+    cd sd-scripts && \
+    git checkout 0cfcb5a49cf813547d728101cc05edf1a9b7d06c
+
+# Cache models
+wget https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned.safetensors -P /model_cache
