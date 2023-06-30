@@ -55,7 +55,13 @@ def handler(job):
                          --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors" \
                          --train_data_dir="./training/img" \
                          --resolution=512,512 \
+                         --network_alpha=1 \
+                         --text_encoder_lr=5e-05 \
                          --unet_lr={job_input['unet_lr']} \
+                         --network_dim={job_input['network_dim']} \
+                         --lr_scheduler = {job_input['lr_scheduler']} \
+                         --learning_rate = {job_input['learning_rate']} \
+                         --lr_scheduler_num_cycles = {job_input['lr_scheduler_num_cycles']} \
                          --output_dir="./training/model" \
                          --output_name={job['id']} \
                          --save_model_as=safetensors \
@@ -63,10 +69,7 @@ def handler(job):
                          --cache_latents --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
 
 
-# --logging_dir = "./training/logs" - -network_alpha = 1                \
-#     - -text_encoder_lr = 5e-05 - -unet_lr = {job_input['unet_lr']} - -network_dim = {job_input['network_dim']}                          \
-#     - -lr_scheduler_num_cycles = {job_input['lr_scheduler_num_cycles']}                                 \
-#     - -learning_rate = {job_input['learning_rate']} - -lr_scheduler = {job_input['lr_scheduler']}                                    \
+# --logging_dir = "./training/logs" \
 #     - -lr_warmup_steps = {job_input['lr_warmup_steps']} - -train_batch_size = {job_input['train_batch_size']}                        \
 #     - -max_train_steps = {job_input['max_train_steps']} - -save_every_n_epochs = 0 - -mixed_precision = {job_input['mixed_precision']}  \
 #     - -save_precision = {job_input['save_precision']} \
@@ -74,11 +77,12 @@ def handler(job):
 #     - -max_data_loader_n_workers = {job_input['max_data_loader_num_workers']} \
 
     job_s3_config = job.get('s3Config')
+
     uploaded_lora_url = upload_file_to_bucket(
         file_name=f"{job['id']}.safetensors",
         file_location=f"./training/model/{job['id']}.safetensors",
         bucket_creds=job_s3_config,
-        bucket_name=job_s3_config.get('bucketName'),
+        bucket_name=None if job_s3_config is None else job_s3_config['bucketName'],
     )
 
     return {"lora": uploaded_lora_url}
