@@ -69,11 +69,13 @@ def handler(job):
                          --output_name={job['id']} \
                          --mixed_precision={job_input['mixed_precision']} \
                          --save_precision={job_input['save_precision']} \
-                         --optimizer_type={job_input['optimizer_type']} \
                          --max_data_loader_n_workers={job_input['max_data_loader_num_workers']} \
                          --save_model_as=safetensors \
                          --network_module=networks.lora \
                          --cache_latents --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
+
+
+# --optimizer_type = {job_input['optimizer_type']} \
 
     job_s3_config = job.get('s3Config')
 
