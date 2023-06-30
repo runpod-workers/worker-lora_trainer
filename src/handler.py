@@ -67,14 +67,14 @@ def handler(job):
                          --max_train_steps={job_input['max_train_steps']} \
                          --output_dir="./training/model" \
                          --output_name={job['id']} \
+                         --mixed_precision={job_input['mixed_precision']} \
+                         --save_precision={job_input['save_precision']} \
                          --save_model_as=safetensors \
                          --network_module=networks.lora \
                          --cache_latents --bucket_reso_steps=64 --bucket_no_upscale""", shell=True, check=True)
 
 
 # --logging_dir = "./training/logs" \
-#      - -save_every_n_epochs = 0 - -mixed_precision = {job_input['mixed_precision']}  \
-#     - -save_precision = {job_input['save_precision']} \
 #     - -optimizer_type = {job_input['optimizer_type']} \
 #     - -max_data_loader_n_workers = {job_input['max_data_loader_num_workers']} \
 
