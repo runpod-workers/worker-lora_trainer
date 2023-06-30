@@ -72,7 +72,8 @@ jobs:
           python handler.py --test_input='{"input": {
             "zip_url": "https://github.com/runpod-workers/sample-inputs/raw/main/images/froggy.zip",
             "instance_name": "daiton",
-            "class_name": "frog"
+            "class_name": "frog",
+            "steps": 1
           }}'
 
   terminate_runner:
