@@ -59,9 +59,9 @@ def handler(job):
                          --text_encoder_lr=5e-05 \
                          --unet_lr={job_input['unet_lr']} \
                          --network_dim={job_input['network_dim']} \
-                         --lr_scheduler = {job_input['lr_scheduler']} \
-                         --learning_rate = {job_input['learning_rate']} \
-                         --lr_scheduler_num_cycles = {job_input['lr_scheduler_num_cycles']} \
+                         --lr_scheduler={job_input['lr_scheduler']} \
+                         --learning_rate={job_input['learning_rate']} \
+                         --lr_scheduler_num_cycles={job_input['lr_scheduler_num_cycles']} \
                          --output_dir="./training/model" \
                          --output_name={job['id']} \
                          --save_model_as=safetensors \
