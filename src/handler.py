@@ -55,6 +55,7 @@ def handler(job):
                          --pretrained_model_name_or_path="/model_cache/v1-5-pruned.safetensors" \
                          --train_data_dir="./training/img" \
                          --resolution=512,512 \
+                         --unet_lr={job_input['unet_lr']} \
                          --output_dir="./training/model" \
                          --output_name={job['id']} \
                          --save_model_as=safetensors \
@@ -72,11 +73,12 @@ def handler(job):
 #     - -optimizer_type = {job_input['optimizer_type']} \
 #     - -max_data_loader_n_workers = {job_input['max_data_loader_num_workers']} \
 
+    job_s3_config = job.get('s3Config')
     uploaded_lora_url = upload_file_to_bucket(
         file_name=f"{job['id']}.safetensors",
         file_location=f"./training/model/{job['id']}.safetensors",
-        bucket_creds=job['s3Config'],
-        bucket_name=job['s3Config']['bucketName'],
+        bucket_creds=job_s3_config,
+        bucket_name=job_s3_config.get('bucketName'),
     )
 
     return {"lora": uploaded_lora_url}
