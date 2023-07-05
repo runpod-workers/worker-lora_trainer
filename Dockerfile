@@ -25,4 +25,4 @@ ADD src /sd-scripts
 
 WORKDIR /sd-scripts
 
-CMD python3 -u /handler.py
+CMD python3 -u handler.py
